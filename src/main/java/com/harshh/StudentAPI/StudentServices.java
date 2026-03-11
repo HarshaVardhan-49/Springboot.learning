@@ -6,28 +6,34 @@ import java.util.ArrayList;
 
 @Service
 public class StudentServices {
-    private List<String> students = new ArrayList<>(
-        List.of("Harsha","Junnu","vamsi")
+    private List<Student> students = new ArrayList<>(
+        List.of(
+                new Student(101, "harsha",19),
+                new Student(102,"Junnu",10),
+                new Student(103,"vamsi",24),
+                new Student(105,"mahesh",28)
+        )
     );
 
-    public List<String> getStudents(){
+    public List<Student> getStudents(){
         return students;
     }
 
-    public String getStudentId(int id) {
-        if(id < 0 || id >= students.size()) return "Student not found";
-        return students.get(id);
+    public Student getStudentId(int id) {
+        return students.stream()
+                .filter(s -> s.getId() == id)
+                .findFirst()
+                .orElse(null);
+
     }
 
-    public String addStudent(String name) {
-        students.add(name);
-        return name + "succesfull added";
+    public Student addStudent(Student student) {
+        students.add(student);
+        return student;
     }
 
-    public String deleteStudentId(int id) {
-        if(id < 0 || id >= students.size()) return "Student not found";
-        String removed = students.get(id);
-        students.remove(id);
-        return removed + "removed Succesfully";
+    public String deleteStudent(int id) {
+        students.removeIf(s -> s.getId()==id);
+        return "Student" + id +"deleted";
     }
 }

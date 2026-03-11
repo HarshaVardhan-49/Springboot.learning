@@ -1,5 +1,7 @@
 package com.harshh.StudentAPI;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,24 +14,28 @@ public class StudentController {
      public StudentController(StudentServices studentServices){
          this.studentServices = studentServices;
      }
-     // GET all studends (read)
      @GetMapping
-    public List<String> getStudents(){
-         return studentServices.getStudents();
+    public ResponseEntity<List<Student>> getStudents(){
+         return ResponseEntity.ok(studentServices.getStudents());
      }
-     // GET Students by ID (students/id)
-     @GetMapping("/{id}")
-    public String getStudentId(@PathVariable int id){
-         return studentServices.getStudentId(id);
-     }
-    // Post Student nae (create student)
-     @PostMapping
-    public String addStudent(@RequestBody String name){
-         return studentServices.addStudent(name);
-     }
-    // Delete student by id
-     @DeleteMapping("/{id}")
-    public String deleteStudentId(@PathVariable int id){
-         return studentServices.deleteStudentId(id);
-     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Student> getStudentById(@PathVariable int id) {
+        Student student = studentServices.getStudentId(id);
+        if (student == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(student);
+    }
+
+    @PostMapping
+    public ResponseEntity<Student> addStudent(@RequestBody Student student) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(studentServices.addStudent(student));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteStudent(@PathVariable int id) {
+        return ResponseEntity.ok(studentServices.deleteStudent(id));
+    }
+
 }
